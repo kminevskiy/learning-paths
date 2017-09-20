@@ -33,14 +33,14 @@ class CsvParser
 
   def create_domain_mappings
     domains_file.each do |level_paths|
-      level, paths = split_first_last(level_paths)
+      level, paths = split_name_data(level_paths)
       paths.each { |path| domain_mappings << level + '.' + path }
     end
   end
 
   def create_student_mappings
     students_file.each do |student|
-      student_name, scores = split_first_last(student)
+      student_name, scores = split_name_data(student)
       student_mapping = {}
 
       0.upto(scores.size - 1) do |i|
@@ -68,7 +68,7 @@ class CsvParser
       level = convert_edge_level(level)
       student_level = convert_edge_level(student_level)
 
-      level_incomplete = determine_level(level, student_level)
+      level_incomplete = level_reached?(level, student_level)
       learning_path << level_domain if level_incomplete
     end
 
@@ -81,12 +81,12 @@ class CsvParser
     level == 'K' ? '0' : level
   end
 
-  def determine_level(level, other_level)
+  def level_reached?(level, other_level)
     level >= other_level
   end
 
-  def split_first_last(mapping)
-    [mapping[0], mapping[1..-1]]
+  def split_name_data(name_data_pair)
+    [name_data_pair[0], name_data_pair[1..-1]]
   end
 
   def parse_domains_file(path)
